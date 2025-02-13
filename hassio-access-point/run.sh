@@ -201,11 +201,11 @@ else
 	logger "# DHCP not enabled. Skipping dnsmasq" 1
 fi
 
-echo 1 > /proc/sys/net/ipv4/ip_forward
-iptables -t nat -A POSTROUTING -o wlan0 -j MASQUERADE
-iptables -A FORWARD -i wlan0 -o lo -m state --state NEW,RELATED,ESTABLISHED -j ACCEPT
-ip route add default dev wlan0
 sysctl -w net.ipv4.ip_forward=1
+ip route add default dev wlan0
+iptables -t nat -A POSTROUTING -o hassio -j MASQUERADE
+iptables -A FORWARD -i wlan0 -o hassio -j ACCEPT
+iptables -A FORWARD -i hassio -o wlan0 -j ACCEPT
 
 # Start dnsmasq if DHCP is enabled in config
 if $(bashio::config.true "dhcp"); then

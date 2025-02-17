@@ -201,8 +201,11 @@ else
 	logger "# DHCP not enabled. Skipping dnsmasq" 1
 fi
 
+logger "Enable IP forwarding" 0
 sysctl -w net.ipv4.ip_forward=1
+logger "Adding default route" 0
 ip route add default dev wlan0
+logger "Altering iptables" 0
 iptables -t nat -A POSTROUTING -o hassio -j MASQUERADE
 iptables -A FORWARD -i wlan0 -o hassio -j ACCEPT
 iptables -A FORWARD -i hassio -o wlan0 -j ACCEPT
